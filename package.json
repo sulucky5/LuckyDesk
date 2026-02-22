@@ -1,0 +1,55 @@
+{
+  "name": "luckydesk",
+  "version": "1.0.0",
+  "description": "A beautiful desktop calendar app.",
+  "main": "main.js",
+  "author": "LuckyDesk Maker",
+  "scripts": {
+    "start": "electron-forge start",
+    "dev": "vite",
+    "build": "vite build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "build": {
+    "appId": "com.luckydesk.app",
+    "productName": "LuckyDesk",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "directories": {
+      "output": "release"
+    }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^40.6.0",
+    "electron-rebuild": "^3.2.9",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.20",
+    "better-sqlite3": "^12.6.2",
+    "electron-squirrel-startup": "^1.0.1",
+    "fullcalendar": "^6.1.20",
+    "googleapis": "^171.4.0"
+  }
+}

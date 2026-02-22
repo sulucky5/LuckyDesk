@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyDesk</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FullCalendar & RRule Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/rrule@2.6.4/dist/es5/rrule.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/rrule@6.1.10/index.global.min.js"></script>
+</head>
+
+<body>
+    <div id="calendar-widget" class="glass-panel">
+        <header class="calendar-header">
+            <div class="nav-group">
+                <button id="prev-btn" class="icon-btn">&lt;</button>
+                <h2 id="month-display">2026년 2월</h2>
+                <button id="next-btn" class="icon-btn">&gt;</button>
+            </div>
+            <div class="action-group">
+                <button id="layout-btn" class="icon-btn" title="위치/크기 조절">📏</button>
+                <button id="sync-btn" class="icon-btn" title="구글 캘린더 동기화">🔄</button>
+                <button id="settings-btn" class="icon-btn" title="설정">⚙️</button>
+                <button id="close-btn" class="icon-btn" title="닫기">❌</button>
+            </div>
+        </header>
+        <div id="calendar"></div>
+        <!-- 8방향 리사이즈 핸들 -->
+        <div class="resizer ns top"></div>
+        <div class="resizer ns bottom"></div>
+        <div class="resizer ew left"></div>
+        <div class="resizer ew right"></div>
+        <div class="resizer nwse top-left"></div>
+        <div class="resizer nesw top-right"></div>
+        <div class="resizer nesw bottom-left"></div>
+        <div class="resizer nwse bottom-right"></div>
+
+        <!-- 일정을 추가하는 모달을 위젯 안으로 이동하여 위치 문제를 해결함 -->
+        <div id="event-modal" class="modal-overlay">
+            <div class="modal-content glass-panel">
+                <h3 id="modal-title">일정 추가</h3>
+                <input type="text" id="event-input" placeholder="일정 제목">
+                <input type="text" id="event-location" placeholder="장소 (선택 사항)">
+                <textarea id="event-desc" placeholder="설명 (선택 사항)"></textarea>
+                <div class="modal-row datetime-row">
+                    <div class="datetime-group">
+                        <label>시작</label>
+                        <input type="datetime-local" id="event-start">
+                    </div>
+                    <div class="datetime-group">
+                        <label>종료</label>
+                        <input type="datetime-local" id="event-end">
+                    </div>
+                </div>
+                <div class="color-selection">
+                    <span>테마:</span>
+                    <div class="color-options" id="bg-color-options">
+                        <div class="color-circle active" style="background-color: #3B82F6;" data-color="#3B82F6"
+                            title="블루"></div>
+                        <div class="color-circle" style="background-color: #EF4444;" data-color="#EF4444" title="레드">
+                        </div>
+                        <div class="color-circle" style="background-color: #10B981;" data-color="#10B981" title="에메랄드">
+                        </div>
+                        <div class="color-circle" style="background-color: #F59E0B;" data-color="#F59E0B" title="앰버">
+                        </div>
+                        <div class="color-circle" id="bg-custom-circle"
+                            style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); border: 1px solid rgba(255,255,255,0.3);"
+                            title="직접 선택"></div>
+                        <input type="color" id="bg-color-picker" class="hidden" title="테마 배경색 선택">
+                    </div>
+                </div>
+                <div class="color-selection">
+                    <span>글자:</span>
+                    <div class="color-options" id="text-color-options">
+                        <div class="color-circle active" style="background-color: #FFFFFF;" data-color="#FFFFFF"
+                            title="화이트"></div>
+                        <div class="color-circle" style="background-color: #000000;" data-color="#000000" title="블랙">
+                        </div>
+                        <div class="color-circle" id="text-custom-circle"
+                            style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); border: 1px solid rgba(255,255,255,0.3);"
+                            title="직접 선택"></div>
+                        <input type="color" id="text-color-picker" class="hidden" title="글자색 선택">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="event-allday"> 종일 일정
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="event-repeat"> 반복 설정
+                    </label>
+                </div>
+
+                <div id="recurrence-options" class="recurrence-panel hidden">
+                    <div class="modal-row">
+                        <select id="repeat-freq" title="반복 주기 선택">
+                            <option value="DAILY">매일</option>
+                            <option value="WEEKLY">매주</option>
+                            <option value="MONTHLY">매월</option>
+                            <option value="YEARLY">매년</option>
+                        </select>
+                        <div class="interval-group">
+                            <input type="number" id="repeat-interval" min="1" value="1" title="반복 간격 설정">
+                            <span id="interval-unit">일 마다</span>
+                        </div>
+                    </div>
+
+                    <div id="weekly-options" class="hidden">
+                        <div class="day-selector">
+                            <label><input type="checkbox" value="SU">일</label>
+                            <label><input type="checkbox" value="MO">월</label>
+                            <label><input type="checkbox" value="TU">화</label>
+                            <label><input type="checkbox" value="WE">수</label>
+                            <label><input type="checkbox" value="TH">목</label>
+                            <label><input type="checkbox" value="FR">금</label>
+                            <label><input type="checkbox" value="SA">토</label>
+                        </div>
+                    </div>
+
+                    <div id="monthly-options" class="hidden">
+                        <div class="radio-group">
+                            <label><input type="radio" name="monthly-type" value="DOM" checked> <span
+                                    id="repeat-dom-text">매월 22일</span></label>
+                            <label><input type="radio" name="monthly-type" value="DOW"> <span id="repeat-dow-text">매월
+                                    4번째 일요일</span></label>
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <span>종료:</span>
+                        <select id="repeat-end-type" title="반복 종료 조건 선택">
+                            <option value="NEVER">계속 반복</option>
+                            <option value="DATE">날짜 지정</option>
+                            <option value="COUNT">횟수 지정</option>
+                        </select>
+                    </div>
+
+                    <div id="end-date-option" class="hidden">
+                        <input type="date" id="repeat-end-date" class="full-width-input" title="반복 종료일 선택">
+                    </div>
+                    <div id="end-count-option" class="hidden">
+                        <div class="interval-group">
+                            <input type="number" id="repeat-end-count" min="1" value="1" title="반복 횟수 설정">
+                            <span>회 반복 후 종료</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-row jc-end">
+                    <button id="open-google-link" class="link-btn hidden">Google에서 보기 🔗</button>
+                </div>
+                <!-- 반복 일정 중 하나만 수정/삭제할 때 선택하는 옵션 -->
+                <div id="recurring-choice" class="modal-row hidden">
+                    <span style="font-size: 13px; color: rgba(255,255,255,0.7);">범위:</span>
+                    <div class="radio-group horizontal">
+                        <label><input type="radio" name="edit-type" value="this" checked> 이 일정만</label>
+                        <label><input type="radio" name="edit-type" value="future"> 이후 모든 일정</label>
+                        <label><input type="radio" name="edit-type" value="all"> 모든 일정</label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="delete-event" class="danger-btn hidden">삭제</button>
+                    <button id="close-modal" class="secondary-btn">취소</button>
+                    <button id="save-event" class="primary-btn">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 설정 모달 -->
+        <div id="settings-modal" class="modal-overlay">
+            <div class="modal-content glass-panel">
+                <h3>위젯 설정</h3>
+                <div class="modal-row">
+                    <span>투명도 (0: 불투명 ~ 80: 투명(최대))</span>
+                    <div class="interval-group">
+                        <input type="range" id="opacity-slider" min="0" max="80" step="5" value="0" title="투명도 조절">
+                        <span id="opacity-value">0%</span>
+                    </div>
+                </div>
+                <!-- 여기에 다른 설정들을 추가할 수 있습니다 (예: 항상 위에 표시 등) -->
+                <div class="modal-actions">
+                    <button id="close-settings" class="primary-btn">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>
