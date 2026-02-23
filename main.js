@@ -35,6 +35,7 @@ function createWindow() {
         resizable: true,
         movable: true,
         alwaysOnTop: false,
+        icon: path.join(__dirname, 'assets/icon.png'),
         type: 'toolbar',
     });
 
@@ -95,24 +96,14 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 
-    // 트레이 아이콘 생성 (빈 투명 이미지 대신 간단한 캘린더 모양의 16x16 픽셀 직접 생성)
-    const iconBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAZ0lEQVQ4T2NkoBAwUqifwYGBkYGJgZXhP0P/f3zqv2L4z4Aun2QxABtCso1gA8EawXoIg2DDsRmATyNYN2E1gGwjWDdhlQ2yjeQYRhMgs0EKcBpGDxRMA2A0iO4wGAHRAbIRiUkyBgAn7SoxgYkPsgAAAABJRU5ErkJggg==';
-    const icon = nativeImage.createFromDataURL(iconBase64);
+    // 트레이 아이콘 생성
+    const iconPath = path.join(__dirname, 'assets/icon.png');
+    const icon = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 });
 
     tray = new Tray(icon);
     tray.setToolTip('LuckyDesk');
 
     const contextMenu = Menu.buildFromTemplate([
-        {
-            label: '열기',
-            click: () => {
-                if (mainWindow) {
-                    mainWindow.show();
-                    mainWindow.focus();
-                }
-            }
-        },
-        { type: 'separator' },
         {
             label: '설정',
             click: () => {

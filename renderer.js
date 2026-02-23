@@ -240,6 +240,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialDate: initialDate || undefined,
             initialView: 'dayGridMonth',
+            slotMinTime: '06:00:00',
+            slotMaxTime: '24:00:00',
+            nowIndicator: true,
             headerToolbar: false,
             height: '100%',
             locale: 'ko',
@@ -308,6 +311,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('prev-btn').addEventListener('click', () => { if (calendar) calendar.prev(); });
     document.getElementById('next-btn').addEventListener('click', () => { if (calendar) calendar.next(); });
+
+    // 보기 모드 전환
+    const viewBtns = document.querySelectorAll('.view-btn');
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const viewType = btn.id === 'view-month' ? 'dayGridMonth' : (btn.id === 'view-week' ? 'timeGridWeek' : 'timeGridDay');
+            if (calendar) {
+                calendar.changeView(viewType);
+                calendar.today(); // 뷰 변경 시 오늘 날짜로 이동
+                viewBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        });
+    });
 
     // 레이아웃 모드
     layoutBtn.addEventListener('click', () => {
