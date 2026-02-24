@@ -44,6 +44,17 @@ function createWindow() {
     // 배경화면처럼 동작하기 위한 설정
     win.setAlwaysOnTop(false);
 
+    // 자동 실행 설정 반영
+    app.setLoginItemSettings({
+        openAtLogin: settings.autoStart === 'true',
+        openAsHidden: false
+    });
+
+    // Renderer 프로세스 로그 포워딩
+    win.webContents.on('console-message', (event, level, message, line, sourceId) => {
+        console.log(`[Renderer] ${message} (line ${line})`);
+    });
+
     win.loadFile('index.html');
 
     // 마우스 이벤트 무시 여부 제어
@@ -78,9 +89,17 @@ function createWindow() {
         db.updateSetting('bounds', JSON.stringify(finalBounds));
     });
 
-    ipcMain.on('set-opacity', (event, opacity) => {
-        // 더 이상 win.setOpacity를 사용하지 않고 렌더러에서 CSS로 처리하도록 함
-        db.updateSetting('opacity', opacity);
+    ipcMain.on('update-setting', (event, { key, value }) => {
+        db.updateSetting(key, value);
+        if (key === 'enableSync' && value === 'false') {
+            googleSync.clearCredentials();
+        }
+        if (key === 'autoStart') {
+            app.setLoginItemSettings({
+                openAtLogin: value === 'true',
+                openAsHidden: false
+            });
+        }
     });
 
     ipcMain.on('set-editable', (event, editable) => {
@@ -108,8 +127,10 @@ app.whenReady().then(() => {
             label: '설정',
             click: () => {
                 if (mainWindow) {
+                    mainWindow.setAlwaysOnTop(true);
                     mainWindow.show();
                     mainWindow.focus();
+                    mainWindow.setAlwaysOnTop(false);
                     mainWindow.webContents.send('open-settings');
                 }
             }
@@ -149,27 +170,52 @@ ipcMain.handle('get-events', async (event, range) => {
     return db.getEvents();
 });
 
+// 양방향 동기화 헬퍼 함수
+async function pushToGoogleIfEnabled(action, data, id) {
+    const settings = db.getSettings();
+    if (settings.enableSync === 'true') {
+        try {
+            await googleSync.authorize(); // 토큰이 유효한지 확인
+            if (action === 'add') {
+                const googleId = await googleSync.addEvent(data);
+                db.updateGoogleId(id, googleId);
+            } else if (action === 'update' && data.google_id) {
+                await googleSync.updateEvent(data.google_id, data);
+            } else if (action === 'delete') {
+                // data가 google_id 일경우 바로 삭제 (deleteEvent 호출 시 넘겨받음)
+                await googleSync.deleteEvent(data);
+            }
+        } catch (e) {
+            console.error(`구글 캘린더 양방향 동기화(${action}) 중 에러:`, e.message);
+        }
+    }
+}
+
 ipcMain.handle('add-event', async (event, data) => {
-    return db.addEvent(data);
+    const newId = db.addEvent(data);
+    pushToGoogleIfEnabled('add', data, newId);
+    return newId;
 });
 
 ipcMain.handle('update-event', async (event, data) => {
-    return db.updateEvent(data);
+    const result = db.updateEvent(data);
+    pushToGoogleIfEnabled('update', data, data.id);
+    return result;
 });
 
 ipcMain.handle('delete-event', async (event, id) => {
-    return db.deleteEvent(id);
+    const eventData = db.getEventById(id);
+    const result = db.deleteEvent(id);
+    if (eventData && eventData.google_id) {
+        pushToGoogleIfEnabled('delete', eventData.google_id, id);
+    }
+    return result;
 });
 
 // 구글 동기화 관련
 ipcMain.handle('sync-google', async () => {
     try {
-        const isAuthorized = await googleSync.authorize();
-        if (!isAuthorized) {
-            const authUrl = googleSync.getAuthUrl();
-            shell.openExternal(authUrl);
-            return { status: 'need-auth' };
-        }
+        await googleSync.authorize();
 
         const googleEvents = await googleSync.listEvents();
         const existingEvents = db.getEvents();
@@ -225,10 +271,7 @@ ipcMain.handle('sync-google', async () => {
     }
 });
 
-ipcMain.handle('submit-google-code', async (event, code) => {
-    await googleSync.saveToken(code);
-    return { status: 'success' };
-});
+
 
 ipcMain.handle('get-settings', async () => {
     return db.getSettings();

@@ -3,3 +3,5 @@ out/
 release/
 *.log
 *.db
+credentials.json
+token.json

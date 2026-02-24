@@ -240,8 +240,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialDate: initialDate || undefined,
             initialView: 'dayGridMonth',
-            slotMinTime: '06:00:00',
+            slotMinTime: '00:00:00',
             slotMaxTime: '24:00:00',
+            slotDuration: '01:00:00', // 1시간 단위
+            snapDuration: '00:15:00', // 이동은 15분 단위
+            expandRows: true, // 한 화면에 꽉 차게 조절
             nowIndicator: true,
             headerToolbar: false,
             height: '100%',
@@ -604,12 +607,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 구글 동기화
     document.getElementById('sync-btn').addEventListener('click', async () => {
-        const result = await ipcRenderer.invoke('sync-google');
-        if (result.status === 'need-auth') {
-            alert('브라우저에서 구글 로그인을 완료해주세요.');
-        } else if (result.status === 'success') {
-            alert('동기화 완료!');
-            location.reload(); // 데이터 갱신을 위해 새로고침
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+        try {
+            const result = await ipcRenderer.invoke('sync-google');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+            if (result && result.status === 'success') {
+                location.reload(); // 데이터 갱신을 위해 새로고침
+            } else {
+                alert(`동기화 실패: ${result ? result.message : '알 수 없는 오류'}`);
+            }
+        } catch (e) {
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            alert(`동기화 중 오류 발생: ${e.message}`);
         }
     });
 
@@ -1028,6 +1040,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeSettings = document.getElementById('close-settings');
     const opacitySlider = document.getElementById('opacity-slider');
     const opacityValue = document.getElementById('opacity-value');
+    const syncCheckbox = document.getElementById('enable-google-sync');
+    const autoStartCheckbox = document.getElementById('auto-start');
 
     function applyOpacity(opacity) {
         const transValue = Math.round((1 - opacity) * 100);
@@ -1042,12 +1056,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (appSettings.opacity) {
         applyOpacity(parseFloat(appSettings.opacity));
     }
+    if (appSettings.enableSync !== undefined) {
+        const isEnabled = appSettings.enableSync === 'true';
+        syncCheckbox.checked = isEnabled;
+        document.getElementById('sync-btn').style.display = isEnabled ? 'flex' : 'none';
+    }
+    if (appSettings.autoStart !== undefined) {
+        autoStartCheckbox.checked = appSettings.autoStart === 'true';
+    }
 
     settingsBtn.addEventListener('click', () => {
-        settingsModal.style.display = 'flex';
-    });
-
-    ipcRenderer.on('open-settings', () => {
         settingsModal.style.display = 'flex';
     });
 
@@ -1055,13 +1073,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         settingsModal.style.display = 'none';
     });
 
+    ipcRenderer.on('open-settings', () => {
+        settingsModal.style.display = 'flex';
+    });
+
     opacitySlider.addEventListener('input', (e) => {
         const transparency = parseInt(e.target.value);
         const opacity = (100 - transparency) / 100;
         opacityValue.innerText = transparency + '%';
         applyOpacity(opacity);
-        ipcRenderer.send('set-opacity', opacity);
+        ipcRenderer.send('update-setting', { key: 'opacity', value: opacity });
     });
+
+    syncCheckbox.addEventListener('change', (e) => {
+        const isEnabled = e.target.checked;
+        ipcRenderer.send('update-setting', { key: 'enableSync', value: isEnabled ? 'true' : 'false' });
+        document.getElementById('sync-btn').style.display = isEnabled ? 'flex' : 'none';
+    });
+
+    if (autoStartCheckbox) {
+        autoStartCheckbox.addEventListener('change', (e) => {
+            const isEnabled = e.target.checked;
+            ipcRenderer.send('update-setting', { key: 'autoStart', value: isEnabled ? 'true' : 'false' });
+        });
+    }
 
     // 앱 닫기
     document.getElementById('close-btn').addEventListener('click', () => {
