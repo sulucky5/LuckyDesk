@@ -67,6 +67,9 @@ module.exports = {
         }
         return db.prepare("SELECT * FROM events WHERE status IS NULL OR status != 'cancelled'").all();
     },
+    getEventById: (id) => {
+        return db.prepare('SELECT * FROM events WHERE id = ?').get(id);
+    },
     getAllRecurringEvents: () => {
         return db.prepare("SELECT * FROM events WHERE recurrence IS NOT NULL AND (status IS NULL OR status != 'cancelled')").all();
     },
