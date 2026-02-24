@@ -56,4 +56,5 @@ npm run make
 이 프로젝트는 ISC 라이선스를 따릅니다.
 
 ---
-Developed with ❤️ by LuckyDesk Maker
+Developed with ❤️ by LuckyDesk Maker  
+📧 Contact: [sulucky5@gmail.com](mailto:sulucky5@gmail.com) | [sulucky5@naver.com](mailto:sulucky5@naver.com)
