@@ -1,1 +1,253 @@
-const _0x53ba04=_0x24d4;function _0x5c7e(){const _0x3eee3b=['tKOit','46065zahItK','essing\x20aut','calendar','ync','s.json','find','878424bXOFlV','5e44e62f53','events','pheriv','f0fd9ee36a','니다.','token.json','createServ','thUrl','c7bcca32a5','userData','0b2ed23e87','TpJwn','close','8544a11740','가\x20이미\x20사용\x20중입','data','b7ac71c26c','sole의\x20리디렉션','installed','start','aa2babf5b2','18027230KNxVtA','6d21a45241','cae839fefd','957bf11b56','DOZzY','setCredent','authorize','5243b04d0c','mFMuN','f16035aa4c','94fd1255ec','de7f45f8f7','getFullYea','fce92673f2','638c8e8310','ad1daec5a4','d70bb86d19','descriptio','4dd282712a','fd8c7a172b','ade03fb7e5','fb95b4db99','297c203169','join','45f136ec2c','list','byTKo','4348750PdVWlF','2547586886','1317cd7b26','BhkoO','DpwTW','d02021ba26','5ba58dff9c','><p>이\x20창을\x20닫','toISOStrin','삭제\x20실패:','IGpvm','lCGhP','류\x20발생:','니다.\x20Google','log','c4ded1538b','59d99a600b','OAuth2','2a55b66b7e','2f9b2a391c','h/calendar','kHWeG','아주세요.</p><','c1df847be6','60ece69cf1','error','1083165GMhKLW','ials','text/html;','clearCrede','googleapis','utf-8','6fe6540d05','4932b059df','gVSBr','2872bKzUZi','83e6c2a1b9','henticatio','startTime','openExtern','971569fa41','offline','QnmHg','adddc1d6e5','gZfhP','660ae02028','end','KZOSy','8dd739bcb7','33dd32bc5b','d33583b1dc','url','https://ww','eec26d6922','e6acaa9964','001e52cc67','final','Authentica','length','nWyrJ','update','deleteEven','.events','826713nDRRNg','DZyGG','vJHpJ','from','384773e8e1','3e44bd04d4','2c6abf13a7','stringify','BoLsT','script>win','addEvent','EADDRINUSE','189020e892','2114e8cde4','insert','lfqWB','existsSync','0edd90bdfd','updateEven','port','94da248564','localhost','36c67fe3d8','ee5b083eb8','152WCFKYz','w.googleap','DgfZQ','crypto','web','listEvents','getPath','6bca6bac4b','.0.0.1','DhCJz','80e2fcd015','gQroU','898bd7399e','6fbdab7e2e','electron','\x20파일\x20삭제\x20중\x20오','parse','<h1>인증이\x20완료','code','createDeci','2d1a456c6b','8fcc5cd4db','6e3fb2ea4d','http://127','0a2abe1ba3','getNewToke','29057ab87c','8b655e2fba','99c07f6d9a','구글\x20캘린더\x20일정\x20','PJZJL','3b0d5e804e','6766d337a9','bf16454d58','writeHead','oAuth2Clie','nAutomatic','query','18621WYpaLA','hex','ntials','primary','6DtWqru','items'];_0x5c7e=function(){return _0x3eee3b;};return _0x5c7e();}(function(_0x5193da,_0x45cf3c){const _0x2e4e18=_0x24d4,_0x54506f=_0x5193da();while(!![]){try{const _0x424740=parseInt(_0x2e4e18(0x11f))/(-0x15d*-0x5+-0x26e*0x3+0x7a)+parseInt(_0x2e4e18(0xaf))/(0x1099+-0x17ce*-0x1+0x1b*-0x17f)+-parseInt(_0x2e4e18(0xa9))/(0x16*-0xdd+0x1e3*0xd+-0x586)*(parseInt(_0x2e4e18(0x7c))/(-0xcaf*-0x1+0x10f0+-0x1d9b))+parseInt(_0x2e4e18(0xfa))/(0x1a7a+0x1cc6+0x623*-0x9)+-parseInt(_0x2e4e18(0xa6))/(0xc82+-0xdc+-0xba0)*(-parseInt(_0x2e4e18(0xe0))/(0xce+-0x10d6+0x100f))+-parseInt(_0x2e4e18(0x103))/(0x2689*-0x1+0x1*-0x67+0x26f8)*(-parseInt(_0x2e4e18(0xa2))/(-0x74b*-0x3+-0x1918+0x340))+-parseInt(_0x2e4e18(0xc5))/(0x17*0x1a+0xc6c+0x75c*-0x2);if(_0x424740===_0x45cf3c)break;else _0x54506f['push'](_0x54506f['shift']());}catch(_0x305766){_0x54506f['push'](_0x54506f['shift']());}}}(_0x5c7e,-0x46bc7*0x1+0xae33*0x12+-0xcd81));const fs=require('fs'),crypto=require(_0x53ba04(0x7f)),path=require('path'),http=require('http'),url=require('url'),{google}=require(_0x53ba04(0xfe)),{app,shell}=require(_0x53ba04(0x8a)),TOKEN_PATH=path[_0x53ba04(0xdc)](app[_0x53ba04(0x82)](_0x53ba04(0xb9)),'token.json'),CREDENTIALS_PATH=path[_0x53ba04(0xdc)](__dirname,'credential'+_0x53ba04(0xad));function _0x24d4(_0x31f7aa,_0x35869a){_0x31f7aa=_0x31f7aa-(-0x1*0x1af5+0x36*-0x72+0x336b);const _0x3525e6=_0x5c7e();let _0x2dda3f=_0x3525e6[_0x31f7aa];return _0x2dda3f;}class GoogleSync{constructor(){const _0x5c93d4=_0x53ba04;this[_0x5c93d4(0x9f)+'nt']=null;}async[_0x53ba04(0xcb)](){const _0xa748f6=_0x53ba04,_0x164c0a={'IGpvm':_0xa748f6(0xc8)+_0xa748f6(0xcf)+'4a3c9e2e50'+_0xa748f6(0x115)+_0xa748f6(0xc7)+_0xa748f6(0xbd)+_0xa748f6(0xba)+_0xa748f6(0xf3)+'702fe01122'+_0xa748f6(0x104)+_0xa748f6(0xce)+_0xa748f6(0xcc)+'eba35065cf'+_0xa748f6(0x9b)+_0xa748f6(0x123)+_0xa748f6(0xb0)+_0xa748f6(0x94)+'e013d9424f'+'125f3b4118'+_0xa748f6(0x10d)+_0xa748f6(0x112)+'9976a749b0'+_0xa748f6(0x90)+_0xa748f6(0xd3)+_0xa748f6(0xd8)+_0xa748f6(0xd4)+_0xa748f6(0x100)+_0xa748f6(0xdd)+_0xa748f6(0xd0)+_0xa748f6(0xd5)+_0xa748f6(0xc0)+_0xa748f6(0xef)+_0xa748f6(0x75)+_0xa748f6(0x86)+_0xa748f6(0x10b)+_0xa748f6(0x7a)+_0xa748f6(0x98)+_0xa748f6(0x7b)+_0xa748f6(0x88)+_0xa748f6(0x110)+'1f7f0e102d'+'14bcdfc731'+_0xa748f6(0xe1)+'f9e7774b8c'+_0xa748f6(0xb8)+_0xa748f6(0xe5)+'57a0c09b3e'+'5904213f0b'+_0xa748f6(0xf8)+_0xa748f6(0xf2)+_0xa748f6(0xc4)+_0xa748f6(0x101)+_0xa748f6(0x71)+_0xa748f6(0x70)+_0xa748f6(0x116)+_0xa748f6(0x9c)+_0xa748f6(0x9d)+'0d22d18754'+_0xa748f6(0x83)+'b461c232f3'+_0xa748f6(0x78)+_0xa748f6(0x117)+'ab1e4a7302'+_0xa748f6(0x111)+_0xa748f6(0xd9)+'bd3a9d71ed'+_0xa748f6(0x108)+_0xa748f6(0xb3)+_0xa748f6(0xc6)+_0xa748f6(0xda)+'aafc139ef7'+_0xa748f6(0x91)+_0xa748f6(0x97)+'bf2480d95b'+_0xa748f6(0xd7)+_0xa748f6(0xf7)+'7818fd290c'+'1ad75dceaa'+_0xa748f6(0x6a)+_0xa748f6(0x89)+_0xa748f6(0x124)+_0xa748f6(0xe6)+'799330e270'+'5b','kKJYN':_0xa748f6(0x96)+'7966d533d1'+_0xa748f6(0xdb)+'059511f954'+_0xa748f6(0xd2)+_0xa748f6(0x92)+'9f90','bjztz':_0xa748f6(0xf0)+'aaa6257d56'+_0xa748f6(0xe2)+'af','kHWeG':_0xa748f6(0xa3),'BoLsT':_0xa748f6(0xff),'lfqWB':function(_0xf7d319,_0xbf99da){return _0xf7d319>_0xbf99da;}},_0x14e150=_0x164c0a[_0xa748f6(0xea)],_0x45767d=_0x164c0a['kKJYN'],_0xcdeedb=_0x164c0a['bjztz'],_0x3ab1d1=crypto[_0xa748f6(0x8f)+_0xa748f6(0xb2)]('aes-256-cb'+'c',Buffer[_0xa748f6(0x122)](_0x45767d,_0x164c0a['kHWeG']),Buffer[_0xa748f6(0x122)](_0xcdeedb,_0x164c0a[_0xa748f6(0xf5)]));let _0x3687ad=_0x3ab1d1[_0xa748f6(0x11c)](_0x14e150,_0x164c0a[_0xa748f6(0xf5)],_0x164c0a[_0xa748f6(0x6c)]);_0x3687ad+=_0x3ab1d1[_0xa748f6(0x118)](_0xa748f6(0xff));const _0x6ba52b=JSON[_0xa748f6(0x8c)](_0x3687ad),{client_secret:_0xcc4f39,client_id:_0x924e46,redirect_uris:_0xd5b681}=_0x6ba52b[_0xa748f6(0xc2)]||_0x6ba52b[_0xa748f6(0x80)];let _0x3980c4=_0xa748f6(0x93)+_0xa748f6(0x84);if(_0xd5b681&&_0x164c0a[_0xa748f6(0x73)](_0xd5b681[_0xa748f6(0x11a)],-0x20e9*0x1+0x14ae+0xc3b)){const _0xf80c5=_0xd5b681[_0xa748f6(0xae)](_0x13c475=>_0x13c475['includes'](_0xa748f6(0x79))||_0x13c475['includes']('127.0.0.1'));_0xf80c5?_0x3980c4=_0xf80c5:_0x3980c4=_0xd5b681[-0x3*-0x799+0x22d5+0x4*-0xe68];}this[_0xa748f6(0x9f)+'nt']=new google['auth'][(_0xa748f6(0xf1))](_0x924e46,_0xcc4f39,_0x3980c4);if(fs['existsSync'](TOKEN_PATH)){const _0x1cdd58=fs['readFileSy'+'nc'](TOKEN_PATH);return this['oAuth2Clie'+'nt'][_0xa748f6(0xca)+_0xa748f6(0xfb)](JSON[_0xa748f6(0x8c)](_0x1cdd58)),!![];}return await this[_0xa748f6(0x95)+_0xa748f6(0xa0)](_0x3980c4);}async[_0x53ba04(0x95)+_0x53ba04(0xa0)](_0x544777){const _0x2fd63d=_0x53ba04,_0x32c45b={'AfWQm':function(_0x28e9c5,_0x4e384e){return _0x28e9c5===_0x4e384e;},'BhkoO':_0x2fd63d(0x6f),'PJZJL':function(_0x1c64de,_0x3b433d){return _0x1c64de(_0x3b433d);},'lCGhP':_0x2fd63d(0x109),'DZyGG':_0x2fd63d(0x114)+_0x2fd63d(0x7d)+'is.com/aut'+_0x2fd63d(0xf4)+_0x2fd63d(0x11e),'TpJwn':function(_0x46a9e4,_0x2464fc){return _0x46a9e4+_0x2464fc;},'DgfZQ':_0x2fd63d(0x119)+'tion\x20Error'+':\x20','KZOSy':_0x2fd63d(0xfc)+'\x20charset=u'+'tf-8','RXBvk':'Error\x20proc'+_0x2fd63d(0xaa)+_0x2fd63d(0x105)+'n.','dMJaF':function(_0x254fa1,_0x34de88){return _0x254fa1(_0x34de88);},'tKOit':_0x2fd63d(0xf9)};return new Promise((_0x3daa5e,_0xf5edd2)=>{const _0x22e83e=_0x2fd63d,_0x3d01a9={'DhCJz':function(_0x46b26c,_0x2e3324){const _0x208236=_0x24d4;return _0x32c45b[_0x208236(0xbb)](_0x46b26c,_0x2e3324);},'gQroU':_0x32c45b[_0x22e83e(0x7e)],'yvuhe':_0x32c45b[_0x22e83e(0x10f)],'nWyrJ':function(_0x244bba,_0x48c22d){const _0x45f5c2=_0x22e83e;return _0x32c45b[_0x45f5c2(0x9a)](_0x244bba,_0x48c22d);},'mFMuN':_0x32c45b['RXBvk'],'vJHpJ':function(_0x125c74,_0x3f2eb2){return _0x32c45b['dMJaF'](_0x125c74,_0x3f2eb2);}},_0x3e457f=url['parse'](_0x544777),_0x3bfa35=_0x3e457f[_0x22e83e(0x77)]||0x1a58+0x1d4a+-0xc2*0x49,_0x1bbfc2=http[_0x22e83e(0xb6)+'er'](async(_0x46383c,_0x1642a7)=>{const _0xd2be55=_0x22e83e;try{const _0x5cb50b=url['parse'](_0x46383c[_0xd2be55(0x113)],!![]);if(_0x5cb50b[_0xd2be55(0xa1)]['error']){_0x1642a7[_0xd2be55(0x10e)](_0x3d01a9[_0xd2be55(0x85)](_0x3d01a9[_0xd2be55(0x87)],_0x5cb50b[_0xd2be55(0xa1)]['error'])),_0x1bbfc2[_0xd2be55(0xbc)](),_0xf5edd2(new Error(_0x5cb50b[_0xd2be55(0xa1)]['error']));return;}if(_0x5cb50b[_0xd2be55(0xa1)][_0xd2be55(0x8e)]){const _0x589241=_0x5cb50b['query'][_0xd2be55(0x8e)];_0x1642a7[_0xd2be55(0x9e)](0x251f+0x16c4+-0x3b1b,{'Content-Type':_0x3d01a9['yvuhe']}),_0x1642a7['end'](_0xd2be55(0x8d)+'되었습니다.</h1'+_0xd2be55(0xe7)+_0xd2be55(0xf6)+_0xd2be55(0x6d)+'dow.close('+');</script'+'>'),_0x1bbfc2[_0xd2be55(0xbc)]();const {tokens:_0x545687}=await this[_0xd2be55(0x9f)+'nt']['getToken'](_0x589241);this[_0xd2be55(0x9f)+'nt']['setCredent'+'ials'](_0x545687),fs['writeFileS'+_0xd2be55(0xac)](TOKEN_PATH,JSON[_0xd2be55(0x6b)](_0x545687)),_0x3d01a9[_0xd2be55(0x11b)](_0x3daa5e,!![]);}}catch(_0x11c214){_0x1642a7[_0xd2be55(0x10e)](_0x3d01a9[_0xd2be55(0xcd)]),_0x1bbfc2[_0xd2be55(0xbc)](),_0x3d01a9[_0xd2be55(0x121)](_0xf5edd2,_0x11c214);}});_0x1bbfc2['on'](_0x32c45b[_0x22e83e(0xa8)],_0x3846bb=>{const _0x7dc334=_0x22e83e;_0x32c45b['AfWQm'](_0x3846bb[_0x7dc334(0x8e)],_0x32c45b[_0x7dc334(0xe3)])?_0x32c45b['PJZJL'](_0xf5edd2,new Error('포트\x20'+_0x3bfa35+(_0x7dc334(0xbe)+_0x7dc334(0xed)+'\x20Cloud\x20Con'+_0x7dc334(0xc1)+'\x20URI\x20설정을\x20확'+'인해주세요.'))):_0x32c45b[_0x7dc334(0x9a)](_0xf5edd2,_0x3846bb);}),_0x1bbfc2['listen'](_0x3bfa35,()=>{const _0x25ce76=_0x22e83e,_0x396f37=this[_0x25ce76(0x9f)+'nt']['generateAu'+_0x25ce76(0xb7)]({'access_type':_0x32c45b[_0x25ce76(0xeb)],'scope':[_0x32c45b[_0x25ce76(0x120)]]});shell[_0x25ce76(0x107)+'al'](_0x396f37);});});}async[_0x53ba04(0x81)](){const _0x1dface=_0x53ba04,_0xc2d732=google[_0x1dface(0xab)]({'version':'v3','auth':this[_0x1dface(0x9f)+'nt']}),_0x2bd04f=new Date();_0x2bd04f['setFullYea'+'r'](_0x2bd04f[_0x1dface(0xd1)+'r']()-(0xf95+-0x17*-0xf2+-0x2552));const _0x23b76e=await _0xc2d732[_0x1dface(0xb1)][_0x1dface(0xde)]({'calendarId':_0x1dface(0xa5),'timeMin':_0x2bd04f[_0x1dface(0xe8)+'g'](),'maxResults':0xfa,'singleEvents':!![],'orderBy':_0x1dface(0x106)});return _0x23b76e[_0x1dface(0xbf)][_0x1dface(0xa7)];}async[_0x53ba04(0x6e)](_0x3e2f47){const _0x432f4b=_0x53ba04,_0x258345={'DpwTW':_0x432f4b(0xa5)},_0x460e5f=google[_0x432f4b(0xab)]({'version':'v3','auth':this[_0x432f4b(0x9f)+'nt']}),_0x529316={'summary':_0x3e2f47['title'],'description':_0x3e2f47[_0x432f4b(0xd6)+'n'],'start':{'dateTime':new Date(_0x3e2f47[_0x432f4b(0xc3)])[_0x432f4b(0xe8)+'g']()},'end':{'dateTime':_0x3e2f47[_0x432f4b(0x10e)]?new Date(_0x3e2f47[_0x432f4b(0x10e)])[_0x432f4b(0xe8)+'g']():new Date(_0x3e2f47[_0x432f4b(0xc3)])[_0x432f4b(0xe8)+'g']()}},_0x16322f=await _0x460e5f[_0x432f4b(0xb1)][_0x432f4b(0x72)]({'calendarId':_0x258345[_0x432f4b(0xe4)],'resource':_0x529316});return _0x16322f[_0x432f4b(0xbf)]['id'];}[_0x53ba04(0xfd)+_0x53ba04(0xa4)](){const _0x4f553c=_0x53ba04,_0x3e0a47={'DOZzY':_0x4f553c(0xb5)+'\x20파일이\x20삭제되었습'+_0x4f553c(0xb4),'byTKo':'token.json'+_0x4f553c(0x8b)+_0x4f553c(0xec)};if(fs[_0x4f553c(0x74)](TOKEN_PATH))try{fs['unlinkSync'](TOKEN_PATH),console[_0x4f553c(0xee)](_0x3e0a47[_0x4f553c(0xc9)]);}catch(_0x57d544){console[_0x4f553c(0xf9)](_0x3e0a47[_0x4f553c(0xdf)],_0x57d544);}this[_0x4f553c(0x9f)+'nt']=null;}async[_0x53ba04(0x76)+'t'](_0x4096f4,_0x1f0ab8){const _0x55c7ed=_0x53ba04,_0x28c694={'gZfhP':_0x55c7ed(0xa5)};if(!_0x4096f4)return null;const _0x21a816=google['calendar']({'version':'v3','auth':this[_0x55c7ed(0x9f)+'nt']}),_0x29e748={'summary':_0x1f0ab8['title'],'description':_0x1f0ab8[_0x55c7ed(0xd6)+'n'],'start':{'dateTime':new Date(_0x1f0ab8[_0x55c7ed(0xc3)])[_0x55c7ed(0xe8)+'g']()},'end':{'dateTime':_0x1f0ab8[_0x55c7ed(0x10e)]?new Date(_0x1f0ab8['end'])[_0x55c7ed(0xe8)+'g']():new Date(_0x1f0ab8[_0x55c7ed(0xc3)])[_0x55c7ed(0xe8)+'g']()}},_0x34aa4e=await _0x21a816[_0x55c7ed(0xb1)][_0x55c7ed(0x11c)]({'calendarId':_0x28c694[_0x55c7ed(0x10c)],'eventId':_0x4096f4,'resource':_0x29e748});return _0x34aa4e[_0x55c7ed(0xbf)];}async[_0x53ba04(0x11d)+'t'](_0x5da308){const _0x88b570=_0x53ba04,_0x59352d={'gVSBr':_0x88b570(0xa5),'QnmHg':_0x88b570(0x99)+_0x88b570(0xe9)};if(!_0x5da308)return![];const _0x248026=google['calendar']({'version':'v3','auth':this[_0x88b570(0x9f)+'nt']});try{return await _0x248026[_0x88b570(0xb1)]['delete']({'calendarId':_0x59352d[_0x88b570(0x102)],'eventId':_0x5da308}),!![];}catch(_0xdbc984){return console['error'](_0x59352d[_0x88b570(0x10a)],_0xdbc984['message']),![];}}}module['exports']=new GoogleSync();
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const url = require('url');
+const { google } = require('googleapis');
+const { app, shell } = require('electron');
+const db = require('./db');
+
+const TOKEN_PATH = path.join(app.getPath('userData'), 'token.json');
+// 앱 내부에 포함된 credentials.json 을 읽도록 경로 변경 (루트 폴더 기준)
+const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
+
+// Monkey patch generateAuthUrl to add required scope for calendarList
+const originalGenerateAuthUrl = google.auth.OAuth2.prototype.generateAuthUrl;
+google.auth.OAuth2.prototype.generateAuthUrl = function (opts) {
+    if (opts && opts.scope) {
+        if (Array.isArray(opts.scope)) {
+            if (!opts.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                opts.scope.push('https://www.googleapis.com/auth/calendar.readonly');
+            }
+        }
+    }
+    return originalGenerateAuthUrl.call(this, opts);
+};
+
+class GoogleSync {
+    constructor() {
+        this.oAuth2Client = null;
+    }
+
+    async authorize() {
+        if (!fs.existsSync(CREDENTIALS_PATH)) {
+            throw new Error('앱 내부에 credentials.json 파일이 없습니다. 앱 배포 시 포함되어야 합니다.');
+        }
+
+        const content = fs.readFileSync(CREDENTIALS_PATH);
+        const credentials = JSON.parse(content);
+        const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
+
+        // 자동으로 로컬 호스트 URI를 우선적으로 사용
+        // (사용자가 Google Cloud Console에서 http://127.0.0.1 이나 http://localhost 로 설정했다고 가정)
+        let redirect_uri = 'http://127.0.0.1';
+        if (redirect_uris && redirect_uris.length > 0) {
+            const localhostUri = redirect_uris.find(u => u.includes('localhost') || u.includes('127.0.0.1'));
+            if (localhostUri) {
+                redirect_uri = localhostUri;
+            } else {
+                redirect_uri = redirect_uris[0];
+            }
+        }
+
+        this.oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uri);
+
+        if (fs.existsSync(TOKEN_PATH)) {
+            const token = fs.readFileSync(TOKEN_PATH);
+            this.oAuth2Client.setCredentials(JSON.parse(token));
+            return true;
+        }
+
+        // 토큰이 없으면 로컬 서버를 띄워서 새 토큰을 자동 발급 (가로채기) 진행
+        return await this.getNewTokenAutomatic(redirect_uri);
+    }
+
+    async getNewTokenAutomatic(redirectUri) {
+        return new Promise((resolve, reject) => {
+            // redirect_uri에서 포트 번호 추출 (없으면 80 가정)
+            const parsedUrl = url.parse(redirectUri);
+            const port = parsedUrl.port || 80;
+
+            const server = http.createServer(async (req, res) => {
+                try {
+                    const reqUrl = url.parse(req.url, true);
+                    if (reqUrl.query.error) {
+                        res.end('Authentication Error: ' + reqUrl.query.error);
+                        server.close();
+                        reject(new Error(reqUrl.query.error));
+                        return;
+                    }
+
+                    if (reqUrl.query.code) {
+                        const code = reqUrl.query.code;
+                        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                        res.end('<h1>인증이 완료되었습니다.</h1><p>이 창을 닫아주세요.</p><script>window.close();</script>');
+                        server.close();
+
+                        const { tokens } = await this.oAuth2Client.getToken(code);
+                        this.oAuth2Client.setCredentials(tokens);
+                        fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+                        resolve(true); // 인증 성공
+                    }
+                } catch (e) {
+                    res.end('Error processing authentication.');
+                    server.close();
+                    reject(e);
+                }
+            });
+
+            server.on('error', (e) => {
+                if (e.code === 'EADDRINUSE') {
+                    reject(new Error(`포트 ${port}가 이미 사용 중입니다. Google Cloud Console의 리디렉션 URI 설정을 확인해주세요.`));
+                } else {
+                    reject(e);
+                }
+            });
+
+            server.listen(port, () => {
+                // 서버가 시작되면 브라우저 열기
+                const authUrl = this.oAuth2Client.generateAuthUrl({
+                    access_type: 'offline',
+                    scope: ['https://www.googleapis.com/auth/calendar.events'],
+                });
+                shell.openExternal(authUrl);
+            });
+        });
+    }
+
+    async getCalendars() {
+        if (!this.oAuth2Client) throw new Error("Not Authorized");
+        const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+        const res = await calendar.calendarList.list();
+        return res.data.items;
+    }
+
+    async listEvents() {
+        const settings = db.getSettings();
+        let calendarIds = ['primary'];
+        if (settings.syncDownloadCalendarIds) {
+            try {
+                calendarIds = JSON.parse(settings.syncDownloadCalendarIds);
+            } catch (e) {
+                console.error('Error parsing syncDownloadCalendarIds', e);
+            }
+        }
+        const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+        // 과거 일정도 가져오도록 1년 전부터 조회
+        const lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+
+        let allEvents = [];
+        for (const calendarId of calendarIds) {
+            try {
+                const res = await calendar.events.list({
+                    calendarId: calendarId,
+                    timeMin: lastYear.toISOString(),
+                    maxResults: 500,
+                    singleEvents: true,
+                    orderBy: 'startTime',
+                });
+                if (res.data.items) {
+                    res.data.items.forEach(item => item._sourceCalendarId = calendarId);
+                    allEvents = allEvents.concat(res.data.items);
+                }
+            } catch (e) {
+                console.error(`Error listing events for calendar ${calendarId}`, e.message);
+            }
+        }
+        return allEvents;
+    }
+
+    async addEvent(eventData) {
+        const settings = db.getSettings();
+        const calendarId = settings.syncUploadCalendarId || 'primary';
+        const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+        const event = {
+            summary: eventData.title,
+            description: eventData.description,
+            start: { dateTime: new Date(eventData.start).toISOString() },
+            end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+        };
+        const res = await calendar.events.insert({
+            calendarId: calendarId,
+            resource: event,
+        });
+        return res.data.id;
+    }
+
+    async updateEvent(googleId, eventData) {
+        if (!googleId) return null;
+        const settings = db.getSettings();
+        let calendarIds = [settings.syncUploadCalendarId || 'primary'];
+        if (settings.syncDownloadCalendarIds) {
+            try {
+                const down = JSON.parse(settings.syncDownloadCalendarIds);
+                calendarIds = [...new Set([...calendarIds, ...down])];
+            } catch (e) { }
+        }
+        const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+        const event = {
+            summary: eventData.title,
+            description: eventData.description,
+            start: { dateTime: new Date(eventData.start).toISOString() },
+            end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+        };
+
+        let lastError = null;
+        for (const calId of calendarIds) {
+            try {
+                const res = await calendar.events.update({
+                    calendarId: calId,
+                    eventId: googleId,
+                    resource: event,
+                });
+                return res.data;
+            } catch (e) {
+                lastError = e;
+            }
+        }
+        console.error('updateEvent Error:', lastError ? lastError.message : 'Unknown error');
+        return null;
+    }
+
+    async deleteEvent(googleId) {
+        if (!googleId) return false;
+        const settings = db.getSettings();
+        let calendarIds = [settings.syncUploadCalendarId || 'primary'];
+        if (settings.syncDownloadCalendarIds) {
+            try {
+                const down = JSON.parse(settings.syncDownloadCalendarIds);
+                calendarIds = [...new Set([...calendarIds, ...down])];
+            } catch (e) { }
+        }
+        const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+
+        let lastError = null;
+        for (const calId of calendarIds) {
+            try {
+                await calendar.events.delete({
+                    calendarId: calId,
+                    eventId: googleId,
+                });
+                return true;
+            } catch (e) {
+                lastError = e;
+            }
+        }
+        console.error('deleteEvent Error:', lastError ? lastError.message : 'Unknown error');
+        return false;
+    }
+
+    clearCredentials() {
+        if (fs.existsSync(TOKEN_PATH)) {
+            try {
+                fs.unlinkSync(TOKEN_PATH);
+                console.log('token.json 파일이 삭제되었습니다.');
+            } catch (err) {
+                console.error('token.json 파일 삭제 중 오류 발생:', err);
+            }
+        }
+        this.oAuth2Client = null;
+    }
+}
+
+module.exports = new GoogleSync();

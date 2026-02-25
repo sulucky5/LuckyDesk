@@ -5,13 +5,13 @@
   "main": "main.js",
   "author": "LuckyDesk Maker",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "node scripts/generate-credentials.js && electron-forge start",
     "dev": "vite",
-    "build": "vite build",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder --win",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "build": "node scripts/generate-credentials.js && vite build",
+    "pack": "node scripts/generate-credentials.js && electron-builder --dir",
+    "dist": "node scripts/generate-credentials.js && electron-builder --win",
+    "package": "node scripts/generate-credentials.js && electron-forge package",
+    "make": "node scripts/generate-credentials.js && electron-forge make"
   },
   "build": {
     "appId": "com.luckydesk.app",
@@ -41,6 +41,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron/fuses": "^1.8.0",
+    "dotenv": "^17.3.1",
     "electron": "^40.6.0",
     "electron-rebuild": "^3.2.9",
     "javascript-obfuscator": "^5.3.0",
