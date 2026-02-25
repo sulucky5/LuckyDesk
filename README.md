@@ -31,7 +31,24 @@ cd LuckyDesk
 
 # 의존성 설치
 npm install
+```
 
+### 환경 변수 설정 (Google 캘린더 연동)
+
+구글 캘린더 동기화 기능을 구동하기 위해서는 Google Cloud Console에서 OAuth 2.0 클라이언트 ID를 발급받아 환경 변수를 설정해야 합니다.
+
+1. `.env.sample` 파일을 복사하여 프로젝트 루트에 `.env` 파일을 생성합니다.
+2. 발급받은 `client_id`와 `client_secret` 값을 `.env` 파일에 기입합니다.
+
+```env
+GOOGLE_CLIENT_ID="발급받은_CLIENT_ID.apps.googleusercontent.com"
+GOOGLE_PROJECT_ID="프로젝트_ID"
+GOOGLE_CLIENT_SECRET="발급받은_CLIENT_SECRET"
+```
+
+*(참고: `npm start`나 `npm run make`를 실행하면 해당 값을 기반으로 `credentials.json`이 자동 생성됩니다.)*
+
+```bash
 # 앱 실행
 npm start
 
