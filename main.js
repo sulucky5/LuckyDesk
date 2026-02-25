@@ -3,6 +3,150 @@ const path = require('path');
 const db = require('./db');
 const googleSync = require('./google-sync');
 
+/* === GOOGLE SYNC MONKEY PATCH START === */
+const { google } = require('googleapis');
+// Monkey patch generateAuthUrl to add required scope for calendarList
+const originalGenerateAuthUrl = google.auth.OAuth2.prototype.generateAuthUrl;
+google.auth.OAuth2.prototype.generateAuthUrl = function (opts) {
+    if (opts && opts.scope) {
+        if (Array.isArray(opts.scope)) {
+            if (!opts.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                opts.scope.push('https://www.googleapis.com/auth/calendar.readonly');
+            }
+        }
+    }
+    return originalGenerateAuthUrl.call(this, opts);
+};
+
+// We monkey patch googleSync to avoid touching the obfuscated credentials
+googleSync.getCalendars = async function () {
+    const { google } = require('googleapis');
+    if (!this.oAuth2Client) throw new Error("Not Authorized");
+    const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+    const res = await calendar.calendarList.list();
+    return res.data.items;
+};
+
+googleSync.listEvents = async function () {
+    const settings = db.getSettings();
+    let calendarIds = ['primary'];
+    if (settings.syncDownloadCalendarIds) {
+        try {
+            calendarIds = JSON.parse(settings.syncDownloadCalendarIds);
+        } catch (e) {
+            console.error('Error parsing syncDownloadCalendarIds', e);
+        }
+    }
+    const { google } = require('googleapis');
+    const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+    const lastYear = new Date();
+    lastYear.setFullYear(lastYear.getFullYear() - 1);
+
+    let allEvents = [];
+    for (const calendarId of calendarIds) {
+        try {
+            const res = await calendar.events.list({
+                calendarId: calendarId,
+                timeMin: lastYear.toISOString(),
+                maxResults: 500,
+                singleEvents: true,
+                orderBy: 'startTime',
+            });
+            if (res.data.items) {
+                res.data.items.forEach(item => item._sourceCalendarId = calendarId);
+                allEvents = allEvents.concat(res.data.items);
+            }
+        } catch (e) {
+            console.error(`Error listing events for calendar ${calendarId}`, e.message);
+        }
+    }
+    return allEvents;
+};
+
+googleSync.addEvent = async function (eventData) {
+    const settings = db.getSettings();
+    const calendarId = settings.syncUploadCalendarId || 'primary';
+    const { google } = require('googleapis');
+    const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+    const event = {
+        summary: eventData.title,
+        description: eventData.description,
+        start: { dateTime: new Date(eventData.start).toISOString() },
+        end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+    };
+    const res = await calendar.events.insert({
+        calendarId: calendarId,
+        resource: event,
+    });
+    return res.data.id;
+};
+
+googleSync.updateEvent = async function (googleId, eventData) {
+    if (!googleId) return null;
+    const settings = db.getSettings();
+    let calendarIds = [settings.syncUploadCalendarId || 'primary'];
+    if (settings.syncDownloadCalendarIds) {
+        try {
+            const down = JSON.parse(settings.syncDownloadCalendarIds);
+            calendarIds = [...new Set([...calendarIds, ...down])];
+        } catch (e) { }
+    }
+    const { google } = require('googleapis');
+    const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+    const event = {
+        summary: eventData.title,
+        description: eventData.description,
+        start: { dateTime: new Date(eventData.start).toISOString() },
+        end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+    };
+
+    let lastError = null;
+    for (const calId of calendarIds) {
+        try {
+            const res = await calendar.events.update({
+                calendarId: calId,
+                eventId: googleId,
+                resource: event,
+            });
+            return res.data;
+        } catch (e) {
+            lastError = e;
+        }
+    }
+    console.error('updateEvent Error:', lastError.message);
+    return null;
+};
+
+googleSync.deleteEvent = async function (googleId) {
+    if (!googleId) return false;
+    const settings = db.getSettings();
+    let calendarIds = [settings.syncUploadCalendarId || 'primary'];
+    if (settings.syncDownloadCalendarIds) {
+        try {
+            const down = JSON.parse(settings.syncDownloadCalendarIds);
+            calendarIds = [...new Set([...calendarIds, ...down])];
+        } catch (e) { }
+    }
+    const { google } = require('googleapis');
+    const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+
+    let lastError = null;
+    for (const calId of calendarIds) {
+        try {
+            await calendar.events.delete({
+                calendarId: calId,
+                eventId: googleId,
+            });
+            return true;
+        } catch (e) {
+            lastError = e;
+        }
+    }
+    console.error('deleteEvent Error:', lastError.message);
+    return false;
+};
+/* === GOOGLE SYNC MONKEY PATCH END === */
+
 let tray = null;
 let mainWindow = null;
 function createWindow() {
@@ -215,9 +359,28 @@ ipcMain.handle('delete-event', async (event, id) => {
 // 구글 동기화 관련
 ipcMain.handle('sync-google', async () => {
     try {
+        const tokenPath = path.join(app.getPath('userData'), 'token.json');
+        if (require('fs').existsSync(tokenPath)) {
+            try {
+                const tokenStr = require('fs').readFileSync(tokenPath, 'utf8');
+                const token = JSON.parse(tokenStr);
+                // Check if we have the needed scope for calendars read
+                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                    googleSync.clearCredentials();
+                }
+            } catch (e) {
+                googleSync.clearCredentials();
+            }
+        }
+
         await googleSync.authorize();
 
         const googleEvents = await googleSync.listEvents();
+        const settings = db.getSettings();
+        let calendarColors = {};
+        if (settings.syncCalendarColors) {
+            try { calendarColors = JSON.parse(settings.syncCalendarColors); } catch (e) { }
+        }
         const existingEvents = db.getEvents();
         const existingGoogleIds = new Set(existingEvents.filter(e => e.google_id).map(e => e.google_id));
 
@@ -251,6 +414,7 @@ ipcMain.handle('sync-google', async () => {
                 etag: gEvent.etag || '',
                 status: gEvent.status || 'confirmed',
                 color_id: gEvent.colorId || '',
+                color: calendarColors[gEvent._sourceCalendarId] || '',
                 recurrence: recurrenceStr,
                 recurrence_end: recurrenceEnd
             };
@@ -272,6 +436,29 @@ ipcMain.handle('sync-google', async () => {
 });
 
 
+
+ipcMain.handle('get-calendars', async () => {
+    try {
+        const tokenPath = path.join(app.getPath('userData'), 'token.json');
+        if (require('fs').existsSync(tokenPath)) {
+            try {
+                const tokenStr = require('fs').readFileSync(tokenPath, 'utf8');
+                const token = JSON.parse(tokenStr);
+                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                    googleSync.clearCredentials(); // 기존 토큰 삭제하여 재인증 유도
+                }
+            } catch (e) {
+                googleSync.clearCredentials();
+            }
+        }
+
+        await googleSync.authorize();
+        return await googleSync.getCalendars();
+    } catch (error) {
+        console.error('get-calendars Error:', error);
+        return [];
+    }
+});
 
 ipcMain.handle('get-settings', async () => {
     return db.getSettings();

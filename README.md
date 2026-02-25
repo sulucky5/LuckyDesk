@@ -47,10 +47,6 @@ npm run make
 - **Styling**: Vanilla CSS (Modern CSS features)
 - **Security**: OAuth 2.0, JS Obfuscation
 
-## 🔒 보안 안내
-
-본 프로젝트는 사용자의 보안을 위해 소스 코드 내의 구글 API 클라이언트 정보 등을 난독화 처리하여 보호하고 있습니다.
-
 ## 📝 라이선스
 
 이 프로젝트는 ISC 라이선스를 따릅니다.

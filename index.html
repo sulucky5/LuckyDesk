@@ -193,6 +193,21 @@
                         <span>활성화</span>
                     </label>
                 </div>
+                <div class="modal-row" id="sync-upload-calendar-row" style="display: none;">
+                    <span>업로드할 구글 캘린더</span>
+                    <select id="sync-upload-calendar-select" class="full-width-input" title="저장할 캘린더 선택"
+                        style="max-width: 200px; padding: 4px; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px;">
+                        <option value="primary" style="color: black;">기본 캘린더 (primary)</option>
+                    </select>
+                </div>
+                <div class="modal-row flex-column" id="sync-download-calendar-row"
+                    style="display: none; flex-direction: column; align-items: flex-start; gap: 8px;">
+                    <span>다운로드할 구글 캘린더 (여러 개 선택 가능)</span>
+                    <div id="sync-download-calendar-list"
+                        style="display: flex; flex-direction: column; gap: 4px; max-height: 150px; overflow-y: auto; width: 100%; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; font-size: 14px;">
+                        <!-- 체크박스는 런타임에 동적으로 추가됨 -->
+                    </div>
+                </div>
                 <div class="modal-row">
                     <span>윈도우 시작 시 자동 실행</span>
                     <label class="checkbox-container">

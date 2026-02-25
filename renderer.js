@@ -1042,6 +1042,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const opacityValue = document.getElementById('opacity-value');
     const syncCheckbox = document.getElementById('enable-google-sync');
     const autoStartCheckbox = document.getElementById('auto-start');
+    const syncUploadCalendarRow = document.getElementById('sync-upload-calendar-row');
+    const syncUploadCalendarSelect = document.getElementById('sync-upload-calendar-select');
+    const syncDownloadCalendarRow = document.getElementById('sync-download-calendar-row');
+    const syncDownloadCalendarList = document.getElementById('sync-download-calendar-list');
 
     function applyOpacity(opacity) {
         const transValue = Math.round((1 - opacity) * 100);
@@ -1065,8 +1069,96 @@ document.addEventListener('DOMContentLoaded', async () => {
         autoStartCheckbox.checked = appSettings.autoStart === 'true';
     }
 
+    let currentSyncUploadCalendarId = appSettings.syncUploadCalendarId || 'primary';
+    let currentSyncDownloadCalendarIds = appSettings.syncDownloadCalendarIds ? JSON.parse(appSettings.syncDownloadCalendarIds) : ['primary'];
+    let currentSyncCalendarColors = appSettings.syncCalendarColors ? JSON.parse(appSettings.syncCalendarColors) : {};
+
+    async function updateCalendarSelectUI() {
+        if (!syncCheckbox.checked) {
+            syncUploadCalendarRow.style.display = 'none';
+            syncDownloadCalendarRow.style.display = 'none';
+            return;
+        }
+        syncUploadCalendarRow.style.display = 'flex';
+        syncDownloadCalendarRow.style.display = 'flex';
+        try {
+            const calendars = await ipcRenderer.invoke('get-calendars');
+            syncUploadCalendarSelect.innerHTML = '<option value="primary" style="color: black;">기본 캘린더 (primary)</option>';
+            syncDownloadCalendarList.innerHTML = '';
+
+            // Add primary option for download
+            const primaryLabel = document.createElement('label');
+            primaryLabel.style.display = 'flex';
+            primaryLabel.style.alignItems = 'center';
+            primaryLabel.style.gap = '4px';
+            const primaryColor = currentSyncCalendarColors['primary'] || '#3B82F6';
+            primaryLabel.innerHTML = `
+                <input type="checkbox" value="primary" ${currentSyncDownloadCalendarIds.includes('primary') ? 'checked' : ''}>
+                <div class="cal-color-wrapper" style="position: relative; width: 16px; height: 16px; border-radius: 50%; background-color: ${primaryColor}; border: 1px solid rgba(255,255,255,0.3); overflow: hidden; display: inline-block; flex-shrink: 0; cursor: pointer;">
+                    <input type="color" class="calendar-color-picker" data-id="primary" value="${primaryColor}" style="position: absolute; top: -10px; left: -10px; width: 40px; height: 40px; padding: 0; border: none; cursor: pointer; opacity: 0;">
+                </div>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">기본 캘린더 (primary)</span>
+            `;
+            syncDownloadCalendarList.appendChild(primaryLabel);
+
+            if (calendars && calendars.length > 0) {
+                calendars.forEach(cal => {
+                    // Upload Select
+                    const opt = document.createElement('option');
+                    opt.value = cal.id;
+                    opt.textContent = cal.summary + (cal.primary ? ' (기본)' : '');
+                    opt.style.color = 'black';
+                    syncUploadCalendarSelect.appendChild(opt);
+
+                    // Download Checklist
+                    const label = document.createElement('label');
+                    label.style.display = 'flex';
+                    label.style.alignItems = 'center';
+                    label.style.gap = '4px';
+                    const isChecked = currentSyncDownloadCalendarIds.includes(cal.id);
+                    const calColor = currentSyncCalendarColors[cal.id] || cal.backgroundColor || '#3B82F6';
+                    label.innerHTML = `
+                        <input type="checkbox" value="${cal.id}" ${isChecked ? 'checked' : ''}>
+                        <div class="cal-color-wrapper" style="position: relative; width: 16px; height: 16px; border-radius: 50%; background-color: ${calColor}; border: 1px solid rgba(255,255,255,0.3); overflow: hidden; display: inline-block; flex-shrink: 0; cursor: pointer;">
+                            <input type="color" class="calendar-color-picker" data-id="${cal.id}" value="${calColor}" style="position: absolute; top: -10px; left: -10px; width: 40px; height: 40px; padding: 0; border: none; cursor: pointer; opacity: 0;">
+                        </div>
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cal.summary}${cal.primary ? ' (기본)' : ''}</span>
+                    `;
+                    syncDownloadCalendarList.appendChild(label);
+                });
+                syncUploadCalendarSelect.value = currentSyncUploadCalendarId;
+            }
+
+            // Bind checkbox events for download
+            syncDownloadCalendarList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const checkedBoxes = syncDownloadCalendarList.querySelectorAll('input[type="checkbox"]:checked');
+                    currentSyncDownloadCalendarIds = Array.from(checkedBoxes).map(cb => cb.value);
+                    ipcRenderer.send('update-setting', { key: 'syncDownloadCalendarIds', value: JSON.stringify(currentSyncDownloadCalendarIds) });
+                });
+            });
+
+            // Bind color picker events
+            syncDownloadCalendarList.querySelectorAll('input[type="color"]').forEach(colorPicker => {
+                colorPicker.addEventListener('input', (e) => {
+                    const calId = e.target.getAttribute('data-id');
+                    e.target.parentElement.style.backgroundColor = e.target.value;
+                });
+                colorPicker.addEventListener('change', (e) => {
+                    const calId = e.target.getAttribute('data-id');
+                    currentSyncCalendarColors[calId] = e.target.value;
+                    ipcRenderer.send('update-setting', { key: 'syncCalendarColors', value: JSON.stringify(currentSyncCalendarColors) });
+                });
+            });
+
+        } catch (e) {
+            console.error('Failed to load calendars', e);
+        }
+    }
+
     settingsBtn.addEventListener('click', () => {
         settingsModal.style.display = 'flex';
+        updateCalendarSelectUI();
     });
 
     closeSettings.addEventListener('click', () => {
@@ -1075,6 +1167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     ipcRenderer.on('open-settings', () => {
         settingsModal.style.display = 'flex';
+        updateCalendarSelectUI();
     });
 
     opacitySlider.addEventListener('input', (e) => {
@@ -1089,6 +1182,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isEnabled = e.target.checked;
         ipcRenderer.send('update-setting', { key: 'enableSync', value: isEnabled ? 'true' : 'false' });
         document.getElementById('sync-btn').style.display = isEnabled ? 'flex' : 'none';
+        updateCalendarSelectUI();
+    });
+
+    syncUploadCalendarSelect.addEventListener('change', (e) => {
+        currentSyncUploadCalendarId = e.target.value;
+        ipcRenderer.send('update-setting', { key: 'syncUploadCalendarId', value: currentSyncUploadCalendarId });
     });
 
     if (autoStartCheckbox) {
