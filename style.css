@@ -315,7 +315,6 @@ body {
 }
 
 .fc-event {
-    background: var(--accent-blue);
     border: none;
     border-radius: 4px;
     padding: 2px 4px;
@@ -351,7 +350,6 @@ body {
 }
 
 .fc-v-event {
-    background: var(--accent-blue);
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

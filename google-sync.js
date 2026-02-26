@@ -161,11 +161,34 @@ class GoogleSync {
         const settings = db.getSettings();
         const calendarId = settings.syncUploadCalendarId || 'primary';
         const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+
+        let start, end;
+        if (eventData.all_day === 1 || eventData.all_day === true) {
+            start = { date: eventData.start.split('T')[0] };
+            if (eventData.end) {
+                // If there's an end date, we need to add 1 day for Google's exclusive end date for all-day events
+                const endDate = new Date(eventData.end);
+                // Ensure it's valid
+                if (!isNaN(endDate.getTime())) {
+                    endDate.setDate(endDate.getDate() + 1);
+                    end = { date: endDate.toISOString().split('T')[0] };
+                } else {
+                    end = start;
+                }
+            } else {
+                end = start;
+            }
+        } else {
+            start = { dateTime: new Date(eventData.start).toISOString() };
+            end = { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() };
+        }
+
         const event = {
             summary: eventData.title,
             description: eventData.description,
-            start: { dateTime: new Date(eventData.start).toISOString() },
-            end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+            location: eventData.location,
+            start: start,
+            end: end,
         };
         const res = await calendar.events.insert({
             calendarId: calendarId,
@@ -185,11 +208,32 @@ class GoogleSync {
             } catch (e) { }
         }
         const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+
+        let start, end;
+        if (eventData.all_day === 1 || eventData.all_day === true) {
+            start = { date: eventData.start.split('T')[0] };
+            if (eventData.end) {
+                const endDate = new Date(eventData.end);
+                if (!isNaN(endDate.getTime())) {
+                    endDate.setDate(endDate.getDate() + 1);
+                    end = { date: endDate.toISOString().split('T')[0] };
+                } else {
+                    end = start;
+                }
+            } else {
+                end = start;
+            }
+        } else {
+            start = { dateTime: new Date(eventData.start).toISOString() };
+            end = { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() };
+        }
+
         const event = {
             summary: eventData.title,
             description: eventData.description,
-            start: { dateTime: new Date(eventData.start).toISOString() },
-            end: { dateTime: eventData.end ? new Date(eventData.end).toISOString() : new Date(eventData.start).toISOString() },
+            location: eventData.location,
+            start: start,
+            end: end,
         };
 
         let lastError = null;

@@ -281,9 +281,19 @@ ipcMain.handle('sync-google', async () => {
                 // 기존 일정 업데이트 (간단히 google_id 기준으로 매칭)
                 const localEvent = existingEvents.find(e => e.google_id === gEvent.id);
                 eventData.id = localEvent.id;
+
+                // 기존에 사용자가 설정한 로컬 커스텀 정보 유지 (색상, 장소, 반복 예외 날짜)
+                eventData.color = localEvent.color || eventData.color;
+                eventData.text_color = localEvent.text_color || '#FFFFFF';
+                if (!eventData.location && localEvent.location) {
+                    eventData.location = localEvent.location;
+                }
+                eventData.exdates = localEvent.exdates;
+
                 db.updateEvent(eventData);
             } else {
                 // 새 일정 추가
+                eventData.text_color = '#FFFFFF';
                 db.addEvent(eventData);
             }
         }
