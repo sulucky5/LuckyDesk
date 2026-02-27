@@ -18,6 +18,9 @@ google.auth.OAuth2.prototype.generateAuthUrl = function (opts) {
             if (!opts.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
                 opts.scope.push('https://www.googleapis.com/auth/calendar.readonly');
             }
+            if (!opts.scope.includes('https://www.googleapis.com/auth/tasks.readonly')) {
+                opts.scope.push('https://www.googleapis.com/auth/tasks.readonly');
+            }
         }
     }
     return originalGenerateAuthUrl.call(this, opts);
@@ -107,7 +110,10 @@ class GoogleSync {
                 // 서버가 시작되면 브라우저 열기
                 const authUrl = this.oAuth2Client.generateAuthUrl({
                     access_type: 'offline',
-                    scope: ['https://www.googleapis.com/auth/calendar.events'],
+                    scope: [
+                        'https://www.googleapis.com/auth/calendar.events',
+                        'https://www.googleapis.com/auth/tasks.readonly'
+                    ],
                 });
                 shell.openExternal(authUrl);
             });
@@ -155,6 +161,43 @@ class GoogleSync {
             }
         }
         return allEvents;
+    }
+
+    async listTasks() {
+        if (!this.oAuth2Client) throw new Error("Not Authorized");
+        const tasksAPI = google.tasks({ version: 'v1', auth: this.oAuth2Client });
+        let allTasks = [];
+        try {
+            const taskListsRes = await tasksAPI.tasklists.list();
+            const taskLists = taskListsRes.data.items || [];
+
+            const lastYear = new Date();
+            lastYear.setFullYear(lastYear.getFullYear() - 1);
+
+            for (const taskList of taskLists) {
+                try {
+                    const tasksRes = await tasksAPI.tasks.list({
+                        tasklist: taskList.id,
+                        showCompleted: true,
+                        showHidden: true,
+                        updatedMin: lastYear.toISOString(), // 가져올 태스크의 최소 수정 일자
+                        maxResults: 1000
+                    });
+
+                    if (tasksRes.data.items) {
+                        tasksRes.data.items.forEach(task => {
+                            task._sourceTaskListId = taskList.id;
+                        });
+                        allTasks = allTasks.concat(tasksRes.data.items);
+                    }
+                } catch (e) {
+                    console.error(`Error listing tasks for list ${taskList.id}`, e.message);
+                }
+            }
+        } catch (e) {
+            console.error('Error listing task lists', e.message);
+        }
+        return allTasks;
     }
 
     async addEvent(eventData) {

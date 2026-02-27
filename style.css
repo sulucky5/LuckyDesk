@@ -318,8 +318,7 @@ body {
     border: none;
     border-radius: 4px;
     padding: 2px 4px;
-    opacity: calc(var(--bg-opacity, 0.85) + 0.2);
-    /* 배경보다 투명도를 20% 낮게(0.2 더 선명하게) 적용 */
+    opacity: var(--event-opacity, calc(var(--bg-opacity, 0.85) + 0.4));
 }
 
 .fc-theme-standard td,

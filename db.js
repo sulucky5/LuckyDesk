@@ -102,6 +102,22 @@ module.exports = {
     updateGoogleId: (id, googleId) => {
         return db.prepare('UPDATE events SET google_id = ? WHERE id = ?').run(googleId, id);
     },
+    clearGoogleSyncData: (deleteEvents = false) => {
+        if (deleteEvents) {
+            // 구글 연동된 일정(google_id가 있는 일정) 모두 삭제
+            db.prepare('DELETE FROM events WHERE google_id IS NOT NULL').run();
+        } else {
+            // 구글 연동된 일정의 연동 정보(google_id 등)만 초기화하고 이벤트 자체는 유지
+            db.prepare('UPDATE events SET google_id = NULL, etag = NULL, url = NULL WHERE google_id IS NOT NULL').run();
+        }
+        // 설정에서 구글 연동 관련 값 삭제
+        db.prepare(`DELETE FROM settings WHERE key IN ('syncUploadCalendarId', 'syncDownloadCalendarIds', 'syncCalendarColors', 'syncCalendarTextColors')`).run();
+    },
+    resetApp: () => {
+        db.prepare('DELETE FROM events').run();
+        db.prepare('DELETE FROM settings').run();
+        db.prepare('VACUUM').run();
+    },
     // 설정 관련
     getSettings: () => {
         db.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)').run();

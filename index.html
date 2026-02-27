@@ -180,10 +180,18 @@
             <div class="modal-content glass-panel">
                 <h3>위젯 설정</h3>
                 <div class="modal-row">
-                    <span>투명도 (0: 불투명 ~ 80: 투명(최대))</span>
+                    <span>배경 투명도 (0: 불투명 ~ 80: 투명(최대))</span>
                     <div class="interval-group">
-                        <input type="range" id="opacity-slider" min="0" max="80" step="5" value="0" title="투명도 조절">
+                        <input type="range" id="opacity-slider" min="0" max="80" step="5" value="0" title="배경 투명도 조절">
                         <span id="opacity-value">0%</span>
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <span>이벤트 투명도 (0: 불투명 ~ 60: 투명(최대))</span>
+                    <div class="interval-group">
+                        <input type="range" id="event-opacity-slider" min="0" max="60" step="5" value="0"
+                            title="이벤트 투명도 조절">
+                        <span id="event-opacity-value">0%</span>
                     </div>
                 </div>
                 <div class="modal-row">
@@ -216,44 +224,44 @@
                     </label>
                 </div>
                 <!-- 여기에 다른 설정들을 추가할 수 있습니다 (예: 항상 위에 표시 등) -->
-                <div class="modal-actions">
+                <div class="modal-actions" style="justify-content: space-between;">
+                    <button id="reset-app-btn" class="danger-btn">앱 초기화</button>
                     <button id="close-settings" class="primary-btn">닫기</button>
+                </div>
+            </div>
+
+            <!-- 로딩 오버레이 (구글 동기화 등 장시간 작업 시 표시) -->
+            <div id="loading-overlay" class="modal-overlay"
+                style="display: none; justify-content: center; align-items: center; z-index: 9999; background: rgba(0,0,0,0.6);">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                    <style>
+                        @keyframes spin {
+                            0% {
+                                transform: rotate(0deg);
+                            }
+
+                            100% {
+                                transform: rotate(360deg);
+                            }
+                        }
+
+                        .loading-spinner {
+                            width: 48px;
+                            height: 48px;
+                            border: 5px solid rgba(255, 255, 255, 0.2);
+                            border-radius: 50%;
+                            border-top-color: #3B82F6;
+                            animation: spin 1s ease-in-out infinite;
+                        }
+                    </style>
+                    <div class="loading-spinner"></div>
+                    <h3 style="color: white; margin: 0; font-weight: 500; font-family: 'Inter', sans-serif;">동기화 진행 중...
+                    </h3>
                 </div>
             </div>
         </div>
 
-        <!-- 로딩 오버레이 (구글 동기화 등 장시간 작업 시 표시) -->
-        <div id="loading-overlay" class="modal-overlay"
-            style="display: none; justify-content: center; align-items: center; z-index: 9999; background: rgba(0,0,0,0.6);">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-                <style>
-                    @keyframes spin {
-                        0% {
-                            transform: rotate(0deg);
-                        }
-
-                        100% {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    .loading-spinner {
-                        width: 48px;
-                        height: 48px;
-                        border: 5px solid rgba(255, 255, 255, 0.2);
-                        border-radius: 50%;
-                        border-top-color: #3B82F6;
-                        animation: spin 1s ease-in-out infinite;
-                    }
-                </style>
-                <div class="loading-spinner"></div>
-                <h3 style="color: white; margin: 0; font-weight: 500; font-family: 'Inter', sans-serif;">동기화 진행 중...
-                </h3>
-            </div>
-        </div>
-    </div>
-
-    <script src="renderer.js"></script>
+        <script src="renderer.js"></script>
 </body>
 
 </html>

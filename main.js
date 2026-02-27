@@ -91,10 +91,14 @@ function createWindow() {
         db.updateSetting('bounds', JSON.stringify(finalBounds));
     });
 
-    ipcMain.on('update-setting', (event, { key, value }) => {
+    ipcMain.on('update-setting', (event, { key, value, deleteEvents }) => {
         db.updateSetting(key, value);
         if (key === 'enableSync' && value === 'false') {
             googleSync.clearCredentials();
+            db.clearGoogleSyncData(deleteEvents);
+            if (mainWindow) {
+                mainWindow.webContents.send('events-updated');
+            }
         }
         if (key === 'autoStart') {
             app.setLoginItemSettings({
@@ -111,6 +115,15 @@ function createWindow() {
 
     ipcMain.on('close-app', () => {
         app.quit();
+    });
+
+    ipcMain.on('reset-app', () => {
+        db.resetApp();
+        googleSync.clearCredentials();
+        app.setLoginItemSettings({ openAtLogin: false });
+        if (mainWindow) {
+            mainWindow.webContents.send('events-updated');
+        }
     });
 }
 
@@ -173,19 +186,26 @@ ipcMain.handle('get-events', async (event, range) => {
 });
 
 // 양방향 동기화 헬퍼 함수
-async function pushToGoogleIfEnabled(action, data, id) {
+async function pushToGoogleIfEnabled(action, eventData, localId) {
     const settings = db.getSettings();
     if (settings.enableSync === 'true') {
         try {
             await googleSync.authorize(); // 토큰이 유효한지 확인
+
+            // 할일(Tasks)은 읽기 전용으로 설정
+            if (eventData && eventData.title) {
+                if (eventData.title.startsWith('[할일] ') || eventData.title.startsWith('[완료] ')) {
+                    return;
+                }
+            }
+
             if (action === 'add') {
-                const googleId = await googleSync.addEvent(data);
-                db.updateGoogleId(id, googleId);
-            } else if (action === 'update' && data.google_id) {
-                await googleSync.updateEvent(data.google_id, data);
+                const googleId = await googleSync.addEvent(eventData);
+                db.updateGoogleId(localId, googleId);
+            } else if (action === 'update' && eventData.google_id) {
+                await googleSync.updateEvent(eventData.google_id, eventData);
             } else if (action === 'delete') {
-                // data가 google_id 일경우 바로 삭제 (deleteEvent 호출 시 넘겨받음)
-                await googleSync.deleteEvent(data);
+                await googleSync.deleteEvent(eventData.google_id);
             }
         } catch (e) {
             console.error(`구글 캘린더 양방향 동기화(${action}) 중 에러:`, e.message);
@@ -209,7 +229,7 @@ ipcMain.handle('delete-event', async (event, id) => {
     const eventData = db.getEventById(id);
     const result = db.deleteEvent(id);
     if (eventData && eventData.google_id) {
-        pushToGoogleIfEnabled('delete', eventData.google_id, id);
+        pushToGoogleIfEnabled('delete', eventData, id);
     }
     return result;
 });
@@ -222,8 +242,8 @@ ipcMain.handle('sync-google', async () => {
             try {
                 const tokenStr = require('fs').readFileSync(tokenPath, 'utf8');
                 const token = JSON.parse(tokenStr);
-                // Check if we have the needed scope for calendars read
-                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                // Check if we have the needed scope for calendars and tasks read
+                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly') || !token.scope.includes('https://www.googleapis.com/auth/tasks.readonly')) {
                     googleSync.clearCredentials();
                 }
             } catch (e) {
@@ -233,11 +253,18 @@ ipcMain.handle('sync-google', async () => {
 
         await googleSync.authorize();
 
-        const googleEvents = await googleSync.listEvents();
+        const [googleEvents, googleTasks] = await Promise.all([
+            googleSync.listEvents(),
+            googleSync.listTasks()
+        ]);
         const settings = db.getSettings();
         let calendarColors = {};
         if (settings.syncCalendarColors) {
             try { calendarColors = JSON.parse(settings.syncCalendarColors); } catch (e) { }
+        }
+        let calendarTextColors = {};
+        if (settings.syncCalendarTextColors) {
+            try { calendarTextColors = JSON.parse(settings.syncCalendarTextColors); } catch (e) { }
         }
         const existingEvents = db.getEvents();
         const existingGoogleIds = new Set(existingEvents.filter(e => e.google_id).map(e => e.google_id));
@@ -284,7 +311,7 @@ ipcMain.handle('sync-google', async () => {
 
                 // 기존에 사용자가 설정한 로컬 커스텀 정보 유지 (색상, 장소, 반복 예외 날짜)
                 eventData.color = localEvent.color || eventData.color;
-                eventData.text_color = localEvent.text_color || '#FFFFFF';
+                eventData.text_color = localEvent.text_color || calendarTextColors[gEvent._sourceCalendarId] || '#FFFFFF';
                 if (!eventData.location && localEvent.location) {
                     eventData.location = localEvent.location;
                 }
@@ -293,10 +320,47 @@ ipcMain.handle('sync-google', async () => {
                 db.updateEvent(eventData);
             } else {
                 // 새 일정 추가
-                eventData.text_color = '#FFFFFF';
+                eventData.text_color = calendarTextColors[gEvent._sourceCalendarId] || '#FFFFFF';
                 db.addEvent(eventData);
             }
         }
+
+        // 할일(Tasks) 처리 - 다운로드 전용
+        for (const gTask of googleTasks) {
+            if (!gTask.due) continue; // 기한이 없는 할일은 제외
+
+            const startStr = gTask.due.substring(0, 10);
+
+            const eventData = {
+                title: (gTask.status === 'completed' ? '[완료] ' : '[할일] ') + (gTask.title || '(제목 없음)'),
+                start: startStr,
+                end: startStr,
+                description: gTask.notes || '',
+                location: '',
+                all_day: 1,
+                google_id: gTask.id,
+                url: '',
+                etag: gTask.etag || '',
+                status: gTask.status === 'completed' ? 'completed' : 'confirmed',
+                color_id: '',
+                color: calendarColors[gTask._sourceTaskListId] || '#f0ad4e',
+                recurrence: null,
+                recurrence_end: null
+            };
+
+            if (existingGoogleIds.has(gTask.id)) {
+                const localEvent = existingEvents.find(e => e.google_id === gTask.id);
+                eventData.id = localEvent.id;
+                eventData.color = localEvent.color || eventData.color;
+                eventData.text_color = localEvent.text_color || calendarTextColors[gTask._sourceTaskListId] || '#FFFFFF';
+
+                db.updateEvent(eventData);
+            } else {
+                eventData.text_color = calendarTextColors[gTask._sourceTaskListId] || '#FFFFFF';
+                db.addEvent(eventData);
+            }
+        }
+
         return { status: 'success' };
     } catch (error) {
         return { status: 'error', message: error.message };
@@ -312,7 +376,7 @@ ipcMain.handle('get-calendars', async () => {
             try {
                 const tokenStr = require('fs').readFileSync(tokenPath, 'utf8');
                 const token = JSON.parse(tokenStr);
-                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly')) {
+                if (!token.scope || !token.scope.includes('https://www.googleapis.com/auth/calendar.readonly') || !token.scope.includes('https://www.googleapis.com/auth/tasks.readonly')) {
                     googleSync.clearCredentials(); // 기존 토큰 삭제하여 재인증 유도
                 }
             } catch (e) {
