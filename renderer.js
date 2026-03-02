@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         location: e.location,
                         originalId: e.id // 원본 DB id
                     },
-                    backgroundColor: e.color || '#3B82F6',
-                    borderColor: e.color || '#3B82F6',
+                    backgroundColor: `color-mix(in srgb, ${e.color || '#3B82F6'} calc(var(--event-opacity, 1) * 100%), transparent)`,
+                    borderColor: `color-mix(in srgb, ${e.color || '#3B82F6'} calc(var(--event-opacity, 1) * 100%), transparent)`,
                     textColor: e.text_color || '#FFFFFF'
                 };
                 events.push(eventObj);
@@ -218,8 +218,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     description: e.description,
                     location: e.location
                 },
-                backgroundColor: e.color || '#3B82F6',
-                borderColor: e.color || '#3B82F6',
+                backgroundColor: `color-mix(in srgb, ${e.color || '#3B82F6'} calc(var(--event-opacity, 1) * 100%), transparent)`,
+                borderColor: `color-mix(in srgb, ${e.color || '#3B82F6'} calc(var(--event-opacity, 1) * 100%), transparent)`,
                 textColor: e.text_color || '#FFFFFF'
             };
         } catch (err) {
@@ -722,7 +722,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('delete-event').classList.remove('hidden');
 
             // 배경색 설정 반영
-            const eventColor = event.backgroundColor || '#3B82F6';
+            const eventColor = event.extendedProps.color || '#3B82F6';
             let bgMatched = false;
             bgColors.forEach(circle => {
                 if (circle.id === 'bg-custom-circle') return;
@@ -746,7 +746,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 글자색 설정 반영
-            const eventTextColor = event.textColor || '#FFFFFF';
+            const eventTextColor = event.extendedProps.text_color || '#FFFFFF';
             let textMatched = false;
             textColors.forEach(circle => {
                 if (circle.id === 'text-custom-circle') return;
@@ -854,8 +854,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         etag: currentEvent.extendedProps.etag,
                         status: currentEvent.extendedProps.status,
                         color_id: currentEvent.extendedProps.color_id,
-                        color: currentEvent.backgroundColor,
-                        text_color: currentEvent.textColor,
+                        color: currentEvent.extendedProps.color,
+                        text_color: currentEvent.extendedProps.text_color,
                         recurrence: currentEvent.extendedProps.recurrence,
                         exdates: newExdates,
                         recurrence_end: extractRecurrenceEnd(currentEvent.extendedProps.recurrence)
@@ -904,8 +904,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         etag: currentEvent.extendedProps.etag,
                         status: currentEvent.extendedProps.status,
                         color_id: currentEvent.extendedProps.color_id,
-                        color: currentEvent.backgroundColor,
-                        text_color: currentEvent.textColor,
+                        color: currentEvent.extendedProps.color,
+                        text_color: currentEvent.extendedProps.text_color,
                         recurrence: newOldRule,
                         exdates: currentEvent.extendedProps.exdates,
                         recurrence_end: extractRecurrenceEnd(newOldRule)
@@ -1296,8 +1296,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     description: currentEvent.extendedProps.description,
                     location: currentEvent.extendedProps.location,
                     all_day: currentEvent.allDay ? 1 : 0,
-                    color: currentEvent.backgroundColor,
-                    text_color: currentEvent.textColor,
+                    color: currentEvent.extendedProps.color,
+                    text_color: currentEvent.extendedProps.text_color,
                     recurrence: currentEvent.extendedProps.recurrence,
                     exdates: newExdates,
                     recurrence_end: extractRecurrenceEnd(currentEvent.extendedProps.recurrence)
@@ -1324,8 +1324,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     description: currentEvent.extendedProps.description,
                     location: currentEvent.extendedProps.location,
                     all_day: currentEvent.allDay ? 1 : 0,
-                    color: currentEvent.backgroundColor,
-                    text_color: currentEvent.textColor,
+                    color: currentEvent.extendedProps.color,
+                    text_color: currentEvent.extendedProps.text_color,
                     recurrence: newOldRule,
                     exdates: currentEvent.extendedProps.exdates,
                     recurrence_end: extractRecurrenceEnd(newOldRule)

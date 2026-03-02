@@ -318,7 +318,6 @@ body {
     border: none;
     border-radius: 4px;
     padding: 2px 4px;
-    opacity: var(--event-opacity, calc(var(--bg-opacity, 0.85) + 0.4));
 }
 
 .fc-theme-standard td,
