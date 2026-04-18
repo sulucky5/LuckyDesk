@@ -231,14 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         if (!calendarEl) return;
 
-        let initialDate = localStorage.getItem('calendarInitialDate');
-        if (initialDate) {
-            const check = new Date(initialDate);
-            if (isNaN(check.getTime())) initialDate = undefined;
-        }
-
         calendar = new FullCalendar.Calendar(calendarEl, {
-            initialDate: initialDate || undefined,
             initialView: 'dayGridMonth',
             slotMinTime: '00:00:00',
             slotMaxTime: '24:00:00',
@@ -301,9 +294,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             },
             datesSet: function (dateInfo) {
                 if (monthDisplay) monthDisplay.innerText = dateInfo.view.title;
-                if (dateInfo.start) {
-                    localStorage.setItem('calendarInitialDate', dateInfo.start.toISOString());
-                }
             }
         });
 
